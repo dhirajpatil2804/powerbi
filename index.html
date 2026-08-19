@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Power BI Chart Guide</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0E211F;
+    --panel: #142E2B;
+    --panel-2: #1B3B36;
+    --line: #2C4E48;
+    --ink: #EFEAE0;
+    --ink-dim: #A9BDB8;
+    --amber: #E8A33D;
+    --coral: #D9694F;
+    --teal: #4FB6A6;
+    --blue: #5B8FD9;
+    --violet: #9C7FD1;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 10% 0%, rgba(232,163,61,0.06), transparent 40%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.55;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:48px 24px 100px;}
+
+  header.hero{margin-bottom:56px;}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{content:"";width:20px;height:1px;background:var(--amber);}
+  h1{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(32px,5vw,52px);
+    line-height:1.05;
+    margin:0 0 18px;
+    letter-spacing:-0.01em;
+  }
+  h1 span{color:var(--teal);}
+  .lede{color:var(--ink-dim);font-size:16px;max-width:640px;margin:0 0 28px;}
+
+  .legend-strip{
+    display:flex;flex-wrap:wrap;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .chip{
+    font-family:var(--mono);font-size:11.5px;
+    padding:6px 12px;border-radius:100px;
+    border:1px solid var(--line);
+    color:var(--ink-dim);
+    display:flex;align-items:center;gap:7px;
+  }
+  .dot{width:7px;height:7px;border-radius:50%;}
+
+  .compass{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:26px 26px 10px;
+    margin-bottom:64px;
+  }
+  .compass h2{
+    font-family:var(--display);font-size:18px;margin:0 0 4px;
+  }
+  .compass p.sub{color:var(--ink-dim);font-size:13.5px;margin:0 0 20px;}
+  .compass-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:1px;background:var(--line);
+    border-radius:10px;overflow:hidden;margin-bottom:16px;
+  }
+  .compass-cell{background:var(--panel-2);padding:16px 18px;}
+  .compass-cell .q{font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;}
+  .compass-cell .a{font-size:14px;font-weight:500;}
+  .compass-cell .a b{color:var(--teal);}
+
+  section.category{margin-bottom:64px;}
+  .cat-head{
+    display:flex;align-items:baseline;gap:14px;
+    margin-bottom:4px;
+  }
+  .cat-num{font-family:var(--mono);font-size:13px;color:var(--ink-dim);}
+  .cat-head h2{
+    font-family:var(--display);font-size:24px;margin:0;
+  }
+  .cat-desc{color:var(--ink-dim);font-size:14px;margin:6px 0 24px;max-width:600px;}
+
+  .cards{display:flex;flex-direction:column;gap:18px;}
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:22px 22px 24px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:18px;
+  }
+  @media(min-width:720px){
+    .card{grid-template-columns:1.1fr 0.9fr;align-items:center;}
+  }
+  .card-text h3{
+    font-family:var(--display);font-size:19px;margin:0 0 8px;
+    display:flex;align-items:center;gap:9px;
+  }
+  .swatch{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+  .card-text p{font-size:14px;color:var(--ink-dim);margin:0 0 10px;}
+  .use-for{
+    font-size:13.5px;
+    background:rgba(79,182,166,0.08);
+    border-left:2px solid var(--teal);
+    padding:8px 12px;border-radius:0 6px 6px 0;
+    margin-bottom:10px;
+  }
+  .use-for b{color:var(--teal);font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:3px;}
+  .avoid{
+    font-size:13.5px;
+    background:rgba(217,105,79,0.07);
+    border-left:2px solid var(--coral);
+    padding:8px 12px;border-radius:0 6px 6px 0;
+  }
+  .avoid b{color:var(--coral);font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:3px;}
+  .chart-box{
+    background:var(--panel-2);
+    border-radius:10px;
+    padding:14px;
+    height:200px;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+  }
+  .chart-box canvas{max-height:172px;}
+  .chart-cap{
+    position:absolute;bottom:6px;left:0;right:0;text-align:center;
+    font-family:var(--mono);font-size:10px;color:var(--ink-dim);
+    letter-spacing:.04em;
+  }
+
+  .vs-note{
+    grid-column:1/-1;
+    font-size:13px;color:var(--ink-dim);
+    border-top:1px dashed var(--line);
+    padding-top:12px;margin-top:2px;
+    font-family:var(--body);
+  }
+  .vs-note b{color:var(--ink);}
+
+  footer{
+    border-top:1px solid var(--line);
+    padding-top:24px;margin-top:40px;
+    color:var(--ink-dim);font-size:13px;
+    font-family:var(--mono);
+  }
+
+  /* custom svg visuals */
+  .kpi-card{text-align:center;}
+  .kpi-num{font-family:var(--display);font-size:38px;font-weight:700;color:var(--teal);}
+  .kpi-label{font-family:var(--mono);font-size:11px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em;margin-top:4px;}
+  .kpi-trend{font-family:var(--mono);font-size:12px;color:var(--amber);margin-top:8px;}
+
+  table.mini{width:100%;border-collapse:collapse;font-size:12.5px;font-family:var(--mono);}
+  table.mini th{color:var(--amber);text-align:left;font-weight:500;padding:5px 8px;border-bottom:1px solid var(--line);font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
+  table.mini td{padding:5px 8px;border-bottom:1px solid rgba(44,78,72,0.5);color:var(--ink-dim);}
+  table.mini tr:last-child td{color:var(--ink);font-weight:600;border-bottom:none;}
+
+/* ===== Premium UI Upgrade ===== */
+:root{
+  --shadow: 0 18px 50px rgba(0,0,0,.18);
+  --shadow-soft: 0 8px 24px rgba(0,0,0,.12);
+  --glass: rgba(20,46,43,.78);
+}
+html{scroll-behavior:smooth;}
+body{
+  min-height:100vh;
+  overflow-x:hidden;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(79,182,166,.10), transparent 32%),
+    radial-gradient(circle at 92% 8%, rgba(91,143,217,.08), transparent 30%),
+    radial-gradient(circle at 50% 100%, rgba(232,163,61,.06), transparent 35%),
+    var(--bg);
+}
+body::before{
+  content:"";
+  position:fixed; inset:0; pointer-events:none; z-index:-1;
+  background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:32px 32px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.5),transparent 80%);
+}
+.wrap{max-width:1180px;padding:28px 22px 90px;}
+.topbar{
+  position:sticky;top:14px;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:10px 12px;
+  margin-bottom:42px;
+  background:rgba(14,33,31,.78);
+  border:1px solid rgba(44,78,72,.9);
+  border-radius:16px;
+  backdrop-filter:blur(18px);
+  box-shadow:var(--shadow-soft);
+}
+.brand{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--display);font-weight:700;font-size:14px;
+}
+.brand-mark{
+  width:34px;height:34px;border-radius:10px;
+  display:grid;place-items:center;
+  color:var(--bg);background:linear-gradient(135deg,var(--teal),var(--amber));
+  font-family:var(--mono);font-weight:700;
+}
+.nav{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
+.nav a{
+  color:var(--ink-dim);text-decoration:none;font-size:11px;
+  font-family:var(--mono);padding:7px 9px;border-radius:8px;
+  transition:.2s ease;
+}
+.nav a:hover{color:var(--ink);background:rgba(79,182,166,.09);}
+.top-actions{display:flex;gap:7px;}
+.icon-btn{
+  border:1px solid var(--line);background:var(--panel);
+  color:var(--ink);border-radius:9px;padding:8px 10px;cursor:pointer;
+  font-family:var(--mono);font-size:11px;
+}
+.icon-btn:hover{border-color:var(--teal);transform:translateY(-1px);}
+.hero{
+  position:relative;
+  padding:42px 38px 32px;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:linear-gradient(145deg,rgba(20,46,43,.96),rgba(14,33,31,.92));
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.hero::after{
+  content:"BI";
+  position:absolute;right:26px;bottom:-40px;
+  font-family:var(--display);font-size:190px;font-weight:700;
+  color:rgba(79,182,166,.035);pointer-events:none;
+}
+.hero .lede{font-size:15px;max-width:760px;}
+.hero-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+  margin-top:28px;
+}
+.stat{
+  padding:14px 15px;border:1px solid var(--line);
+  border-radius:12px;background:rgba(27,59,54,.55);
+}
+.stat strong{display:block;font-family:var(--display);font-size:24px;}
+.stat span{display:block;margin-top:3px;color:var(--ink-dim);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em;}
+.search-row{
+  display:flex;gap:10px;align-items:center;margin:18px 0 28px;
+}
+.search{
+  flex:1;min-width:180px;padding:12px 14px;border-radius:11px;
+  border:1px solid var(--line);background:var(--panel);color:var(--ink);
+  outline:none;font-family:var(--body);
+}
+.search:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(79,182,166,.10);}
+.filter{
+  border:1px solid var(--line);background:var(--panel);color:var(--ink-dim);
+  padding:11px 12px;border-radius:11px;font-family:var(--mono);font-size:11px;
+}
+.category{
+  scroll-margin-top:90px;
+  position:relative;
+}
+.category::before{
+  content:"";position:absolute;left:0;top:38px;bottom:0;width:2px;
+  background:linear-gradient(var(--teal),transparent);
+  opacity:.18;
+}
+.cat-head h2{font-size:26px;}
+.cat-num{
+  padding:4px 7px;border:1px solid var(--line);border-radius:6px;
+  background:var(--panel);color:var(--amber);
+}
+.card{
+  position:relative;
+  box-shadow:var(--shadow-soft);
+  transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease;
+}
+.card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(79,182,166,.55);
+  box-shadow:0 18px 42px rgba(0,0,0,.20);
+}
+.card-text h3{font-size:20px;}
+.chart-box{
+  min-height:210px;
+  border:1px solid rgba(44,78,72,.55);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.018);
+}
+.use-for,.avoid{line-height:1.55;}
+.compass{
+  box-shadow:var(--shadow-soft);
+  background:linear-gradient(145deg,var(--panel),rgba(27,59,54,.75));
+}
+.compass-grid{border:1px solid var(--line);}
+.compass-cell{transition:.2s ease;}
+.compass-cell:hover{background:#21453f;transform:translateY(-1px);}
+.tip{
+  margin:0 0 42px;padding:16px 18px;border-radius:14px;
+  border:1px solid rgba(232,163,61,.28);
+  background:rgba(232,163,61,.055);
+  color:var(--ink-dim);font-size:13px;
+}
+.tip b{color:var(--amber);}
+.empty{display:none;text-align:center;padding:40px;color:var(--ink-dim);font-family:var(--mono);}
+footer{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;}
+.reveal{opacity:0;transform:translateY(14px);transition:.55s ease;}
+.reveal.visible{opacity:1;transform:none;}
+@media(max-width:760px){
+  .wrap{padding:14px 14px 60px;}
+  .topbar{top:8px;margin-bottom:22px;}
+  .nav{display:none;}
+  .hero{padding:30px 22px 24px;border-radius:18px;}
+  .hero-stats{grid-template-columns:repeat(2,1fr);}
+  .search-row{flex-direction:column;align-items:stretch;}
+  .category::before{display:none;}
+}
+@media(max-width:440px){
+  .hero-stats{grid-template-columns:1fr 1fr;}
+  .stat strong{font-size:20px;}
+  .top-actions .icon-btn{padding:7px 8px;}
+}
+@media print{
+  .topbar,.search-row,.tip{display:none!important;}
+  body{background:#fff;color:#111;}
+  .wrap{max-width:none;padding:0;}
+  .hero,.compass,.card{box-shadow:none;}
+  .card{break-inside:avoid;}
+}
+
+
+body.compact-mode .card{padding:16px 18px;}
+body.compact-mode .cards{gap:10px;}
+body.compact-mode .category{margin-bottom:38px;}
+body.compact-mode .chart-box{min-height:175px;height:175px;}
+body.compact-mode .card-text p,
+body.compact-mode .use-for,
+body.compact-mode .avoid{font-size:12px;}
+
+
+/* ===== VISUAL RELIABILITY + PREMIUM 2.0 ===== */
+:root{
+  --radius-xl:28px;
+  --radius-lg:18px;
+  --radius-md:14px;
+  --glow: 0 0 0 1px rgba(79,182,166,.08), 0 22px 70px rgba(0,0,0,.24);
+}
+body{
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.hero{
+  isolation:isolate;
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  width:420px;height:420px;
+  right:-130px;top:-170px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(79,182,166,.16),transparent 68%);
+  pointer-events:none;
+}
+.hero::after{z-index:-1;}
+.search-row{
+  position:sticky;
+  top:82px;
+  z-index:15;
+  padding:10px;
+  border:1px solid rgba(44,78,72,.8);
+  border-radius:16px;
+  background:rgba(14,33,31,.72);
+  backdrop-filter:blur(16px);
+  box-shadow:var(--shadow-soft);
+}
+.card{
+  overflow:hidden;
+  min-width:0;
+}
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto 0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--teal),transparent);
+  opacity:.22;
+}
+.chart-box{
+  width:100%;
+  min-width:0;
+  height:230px;
+  min-height:230px;
+  overflow:hidden;
+}
+.chart-box canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  max-width:100% !important;
+  max-height:100% !important;
+}
+.chart-box svg{
+  display:block;
+  max-width:100%;
+  max-height:100%;
+  overflow:visible;
+}
+.visual-label{
+  position:absolute;
+  top:10px;left:12px;
+  padding:4px 7px;
+  border:1px solid rgba(79,182,166,.18);
+  border-radius:7px;
+  color:var(--ink-dim);
+  background:rgba(14,33,31,.58);
+  font:9px var(--mono);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.chart-box.has-label{padding-top:26px;}
+.chart-box .empty-visual{
+  display:grid;
+  place-items:center;
+  width:100%;height:100%;
+  color:var(--ink-dim);
+  font:11px var(--mono);
+}
+@media(max-width:760px){
+  .search-row{position:static;}
+  .chart-box{height:220px;min-height:220px;}
+}
+@media(max-width:520px){
+  .chart-box{height:205px;min-height:205px;}
+  .hero-stats{gap:8px;}
+  .stat{padding:12px;}
+}
+
+</style>
+
+<script>
+/* ===== Reliable UI enhancements ===== */
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('chartSearch');
+  const categoryFilter = document.getElementById('categoryFilter');
+  const sections = [...document.querySelectorAll('section.category')];
+  const emptyState = document.getElementById('emptyState');
+  const densityBtn = document.getElementById('densityBtn');
+
+  function filterCards(){
+    const q = (searchInput?.value || '').trim().toLowerCase();
+    const cat = categoryFilter?.value || 'all';
+    let visible = 0;
+
+    sections.forEach(section => {
+      const sectionCat = section.dataset.category;
+      const catMatch = cat === 'all' || cat === sectionCat;
+      let sectionVisible = 0;
+
+      section.querySelectorAll('.card').forEach(card => {
+        const haystack = (card.innerText || '').toLowerCase();
+        const match = catMatch && (!q || haystack.includes(q));
+        card.hidden = !match;
+        if(match){ sectionVisible++; visible++; }
+      });
+
+      section.hidden = sectionVisible === 0;
+    });
+
+    if(emptyState) emptyState.style.display = visible ? 'none' : 'block';
+  }
+
+  searchInput?.addEventListener('input', filterCards);
+  categoryFilter?.addEventListener('change', filterCards);
+
+  densityBtn?.addEventListener('click', () => {
+    document.body.classList.toggle('compact-mode');
+    const compact = document.body.classList.contains('compact-mode');
+    densityBtn.textContent = compact ? 'COMFORT' : 'DENSITY';
+  });
+
+  if('IntersectionObserver' in window){
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },{threshold:.06});
+
+    document.querySelectorAll('.category,.compass,.tip,.card').forEach(el => {
+      el.classList.add('reveal');
+      observer.observe(el);
+    });
+  } else {
+    document.querySelectorAll('.category,.compass,.tip,.card').forEach(el => {
+      el.classList.add('visible');
+    });
+  }
+
+  filterCards();
+});
+</script>
+
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topbar" aria-label="Main navigation">
+    <div class="brand"><span class="brand-mark">BI</span><span>Power BI Visual Guide</span><span style="font:9px var(--mono);color:var(--teal);padding:4px 7px;border:1px solid rgba(79,182,166,.25);border-radius:999px;">15+ VISUALS</span></div>
+    <div class="nav">
+      <a href="#comparison">COMPARE</a>
+      <a href="#trend">TREND</a>
+      <a href="#part-to-whole">PART</a>
+      <a href="#relationship">RELATIONSHIP</a>
+      <a href="#flow">FLOW</a>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" onclick="window.print()">PRINT</button>
+      <button class="icon-btn" id="densityBtn" title="Toggle compact view">DENSITY</button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow">Data Analytics · Reference Guide</div>
+    <h1>Power BI charts,<br><span>which one and why.</span></h1>
+    <p class="lede">Every visual below runs on the same sample dataset — enrollment and revenue figures for a computer training institute — so you can see how the <i>same numbers</i> read differently depending on the chart you pick.</p>
+    <div class="hero-stats">
+      <div class="stat"><strong>15+</strong><span>Visual patterns</span></div>
+      <div class="stat"><strong>5</strong><span>Decision categories</span></div>
+      <div class="stat"><strong>8</strong><span>Quick recommendations</span></div>
+      <div class="stat"><strong>1</strong><span>Teaching reference</span></div>
+    </div>
+    <div class="legend-strip">
+      <div class="chip"><span class="dot" style="background:var(--teal)"></span>Comparison</div>
+      <div class="chip"><span class="dot" style="background:var(--blue)"></span>Trend over time</div>
+      <div class="chip"><span class="dot" style="background:var(--amber)"></span>Part-to-whole</div>
+      <div class="chip"><span class="dot" style="background:var(--violet)"></span>Relationship</div>
+      <div class="chip"><span class="dot" style="background:var(--coral)"></span>Flow / single value</div>
+    </div>
+  </header>
+
+  <div class="search-row">
+    <input class="search" id="chartSearch" type="search" placeholder="Search a visual: e.g. line, KPI, funnel, scatter...">
+    <select class="filter" id="categoryFilter">
+      <option value="all">All categories</option>
+      <option value="comparison">Comparison</option>
+      <option value="trend">Trend</option>
+      <option value="part-to-whole">Part-to-whole</option>
+      <option value="relationship">Relationship</option>
+      <option value="flow">Flow & single value</option>
+    </select>
+  </div>
+
+  <div class="tip"><b>Teaching tip:</b> Start with the business question, not the visual. Ask learners what they want the audience to notice first, then choose the chart that makes that answer easiest to see.</div>
+
+  <div class="compass">
+    <h2>Pick by question, not by looks</h2>
+    <p class="sub">The fastest way to choose a chart is to finish this sentence: "I want to show how X ___."</p>
+    <div class="compass-grid">
+      <div class="compass-cell"><div class="q">...compares across categories</div><div class="a">Use a <b>Bar or Column chart</b></div></div>
+      <div class="compass-cell"><div class="q">...changes over time</div><div class="a">Use a <b>Line chart</b></div></div>
+      <div class="compass-cell"><div class="q">...makes up a whole</div><div class="a">Use a <b>Donut / Treemap</b></div></div>
+      <div class="compass-cell"><div class="q">...relates two measures</div><div class="a">Use a <b>Scatter chart</b></div></div>
+      <div class="compass-cell"><div class="q">...narrows through stages</div><div class="a">Use a <b>Funnel chart</b></div></div>
+      <div class="compass-cell"><div class="q">...builds up/down to a total</div><div class="a">Use a <b>Waterfall chart</b></div></div>
+      <div class="compass-cell"><div class="q">...is one headline number</div><div class="a">Use a <b>Card / KPI</b></div></div>
+      <div class="compass-cell"><div class="q">...needs exact figures read</div><div class="a">Use a <b>Table / Matrix</b></div></div>
+    </div>
+  </div>
+
+  <!-- CATEGORY 1: COMPARISON -->
+  <section class="category" id="comparison" data-category="comparison">
+    <div class="cat-head"><span class="cat-num">01</span><h2>Comparison charts</h2></div>
+    <p class="cat-desc">Answer "which is bigger?" across categories like courses, branches, or trainers.</p>
+    <div class="cards searchable-cards">
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--teal)"></span>Clustered Column Chart</h3>
+          <p>Vertical bars, one per category. The default choice for comparing discrete groups side by side.</p>
+          <div class="use-for"><b>Use for</b>Comparing enrollments across 4–8 courses at a glance.</div>
+          <div class="avoid"><b>Avoid when</b>You have 15+ categories — labels collide and it turns unreadable.</div>
+        </div>
+        <div class="chart-box"><canvas id="c1"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--teal)"></span>Bar Chart (horizontal)</h3>
+          <p>Same idea as a column chart, rotated 90°. Category names run along the left instead of the bottom.</p>
+          <div class="use-for"><b>Use for</b>Long category labels ("Python & Data Analytics Trainer Batch") that would wrap awkwardly on a column chart.</div>
+        </div>
+        <div class="chart-box"><canvas id="c2"></canvas></div>
+        <div class="vs-note"><b>Column vs. Bar:</b> identical data, different orientation. Column reads better for time-like sequences; Bar reads better for long text labels or ranked lists.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--teal)"></span>Stacked Column Chart</h3>
+          <p>Bars split into colored segments so you see the total <i>and</i> its breakdown in one shape.</p>
+          <div class="use-for"><b>Use for</b>Total monthly revenue, broken into course categories, without a second chart.</div>
+          <div class="avoid"><b>Avoid when</b>You need to compare the middle segments precisely — only the bottom segment and the total are easy to read exactly.</div>
+        </div>
+        <div class="chart-box"><canvas id="c3"></canvas></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CATEGORY 2: TREND -->
+  <section class="category" id="trend" data-category="trend">
+    <div class="cat-head"><span class="cat-num">02</span><h2>Trend charts</h2></div>
+    <p class="cat-desc">Answer "what happened over time?" — months, weeks, batches, semesters.</p>
+    <div class="cards searchable-cards">
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--blue)"></span>Line Chart</h3>
+          <p>Points connected by a line, tracing direction and rate of change across a continuous axis.</p>
+          <div class="use-for"><b>Use for</b>Monthly enrollment trend across a 6-month batch cycle.</div>
+        </div>
+        <div class="chart-box"><canvas id="c4"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--blue)"></span>Area Chart</h3>
+          <p>A line chart with the space beneath it filled in, which emphasizes volume and magnitude, not just direction.</p>
+          <div class="use-for"><b>Use for</b>Showing cumulative revenue building up over the year — the filled area reads as "accumulated mass."</div>
+          <div class="avoid"><b>Avoid when</b>Comparing several overlapping series — the fills obscure each other. Use a Line chart instead.</div>
+        </div>
+        <div class="chart-box"><canvas id="c5"></canvas></div>
+        <div class="vs-note"><b>Line vs. Area:</b> Line is precise and layers well with multiple series; Area is bolder and better for one hero metric or a stacked total.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--blue)"></span>Line and Clustered Column (Combo)</h3>
+          <p>Bars on one axis, a line on a second axis — for two measures on different scales, shown together.</p>
+          <div class="use-for"><b>Use for</b>Enrollments (bars) against fee revenue (line) across the same months, when the two numbers live on different scales.</div>
+        </div>
+        <div class="chart-box"><canvas id="c6"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--coral)"></span>Ribbon Chart</h3>
+          <p>Like a stacked column, but ranks segments each period and shows crossovers with twisting ribbons between bars.</p>
+          <div class="use-for"><b>Use for</b>Which course had the highest enrollment each month, and exactly when one course overtakes another.</div>
+        </div>
+        <div class="chart-box" style="padding:20px 14px;">
+          <svg viewBox="0 0 260 150" width="100%" height="100%">
+            <!-- bars -->
+            <g font-family="JetBrains Mono" font-size="8" fill="#A9BDB8">
+              <text x="35" y="145" text-anchor="middle">Jan</text>
+              <text x="130" y="145" text-anchor="middle">Feb</text>
+              <text x="225" y="145" text-anchor="middle">Mar</text>
+            </g>
+            <rect x="20" y="40" width="30" height="35" fill="#E8A33D"/>
+            <rect x="20" y="80" width="30" height="45" fill="#4FB6A6"/>
+            <rect x="115" y="20" width="30" height="45" fill="#4FB6A6"/>
+            <rect x="115" y="70" width="30" height="55" fill="#E8A33D"/>
+            <rect x="210" y="15" width="30" height="55" fill="#4FB6A6"/>
+            <rect x="210" y="75" width="30" height="50" fill="#E8A33D"/>
+            <path d="M50,57 C80,57 85,50 115,42" fill="none" stroke="#4FB6A6" stroke-opacity="0.5" stroke-width="10"/>
+            <path d="M50,102 C80,102 85,95 115,97" fill="none" stroke="#E8A33D" stroke-opacity="0.5" stroke-width="10"/>
+            <path d="M145,42 C175,42 180,37 210,42" fill="none" stroke="#4FB6A6" stroke-opacity="0.5" stroke-width="10"/>
+            <path d="M145,97 C175,97 180,95 210,100" fill="none" stroke="#E8A33D" stroke-opacity="0.5" stroke-width="10"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CATEGORY 3: PART TO WHOLE -->
+  <section class="category" id="part-to-whole" data-category="part-to-whole">
+    <div class="cat-head"><span class="cat-num">03</span><h2>Part-to-whole charts</h2></div>
+    <p class="cat-desc">Answer "what share does each piece hold?"</p>
+    <div class="cards searchable-cards">
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--amber)"></span>Pie Chart</h3>
+          <p>A circle sliced by proportion. Best kept to 2–5 slices — beyond that, the angles get hard to compare.</p>
+          <div class="use-for"><b>Use for</b>Share of students across just 3 course categories: Web Dev, Data Analytics, Office Tools.</div>
+        </div>
+        <div class="chart-box"><canvas id="c7"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--amber)"></span>Donut Chart</h3>
+          <p>A pie chart with the center removed — same proportions, but the hole is a natural spot for a total or icon.</p>
+          <div class="use-for"><b>Use for</b>Same course-share data, with total enrolled students displayed in the center.</div>
+        </div>
+        <div class="chart-box"><canvas id="c8"></canvas></div>
+        <div class="vs-note"><b>Pie vs. Donut:</b> functionally identical. Donut is preferred in dashboards because the center can host a KPI number; pie feels more "complete" for a single standalone stat.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--amber)"></span>Treemap</h3>
+          <p>Nested rectangles sized by value — handles far more categories than a pie chart without losing legibility.</p>
+          <div class="use-for"><b>Use for</b>Revenue by course when you have 10+ courses, including small ones a pie chart would squash into slivers.</div>
+        </div>
+        <div class="chart-box" style="padding:14px;">
+          <svg viewBox="0 0 260 160" width="100%" height="100%">
+            <rect x="0" y="0" width="150" height="160" fill="#E8A33D"/>
+            <text x="10" y="20" font-family="JetBrains Mono" font-size="10" fill="#0E211F">Python DA</text>
+            <text x="10" y="34" font-family="JetBrains Mono" font-size="9" fill="#0E211F" opacity="0.7">42%</text>
+            <rect x="152" y="0" width="108" height="90" fill="#4FB6A6"/>
+            <text x="160" y="18" font-family="JetBrains Mono" font-size="9" fill="#0E211F">Web Dev</text>
+            <rect x="152" y="92" width="70" height="68" fill="#5B8FD9"/>
+            <text x="158" y="108" font-family="JetBrains Mono" font-size="8" fill="#0E211F">MS Office</text>
+            <rect x="224" y="92" width="36" height="68" fill="#9C7FD1"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CATEGORY 4: RELATIONSHIP / DISTRIBUTION -->
+  <section class="category" id="relationship" data-category="relationship">
+    <div class="cat-head"><span class="cat-num">04</span><h2>Relationship &amp; distribution</h2></div>
+    <p class="cat-desc">Answer "how do two measures move together?" or "how spread out is this data?"</p>
+    <div class="cards searchable-cards">
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--violet)"></span>Scatter Chart</h3>
+          <p>Each point plots two measures at once — reveals correlation, clusters, and outliers a bar chart can't show.</p>
+          <div class="use-for"><b>Use for</b>Study hours vs. exam score per student, to check whether more practice actually correlates with results.</div>
+        </div>
+        <div class="chart-box"><canvas id="c9"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--violet)"></span>Bubble Chart</h3>
+          <p>A scatter chart with a third measure encoded as bubble size — three variables in one view.</p>
+          <div class="use-for"><b>Use for</b>Fee (x) vs. satisfaction rating (y) vs. batch size (bubble size) per course, all at once.</div>
+          <div class="avoid"><b>Avoid when</b>Bubbles overlap heavily — size becomes hard to judge accurately past 15-20 points.</div>
+        </div>
+        <div class="chart-box"><canvas id="c10"></canvas></div>
+        <div class="vs-note"><b>Scatter vs. Bubble:</b> Scatter compares 2 measures; Bubble adds a 3rd via size. Add a 3rd only if it genuinely changes the story — otherwise it's noise.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CATEGORY 5: FLOW / SINGLE VALUE -->
+  <section class="category" id="flow" data-category="flow">
+    <div class="cat-head"><span class="cat-num">05</span><h2>Flow &amp; single-value visuals</h2></div>
+    <p class="cat-desc">Answer "where did the number go?" or "what's the headline figure right now?"</p>
+    <div class="cards searchable-cards">
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--coral)"></span>Waterfall Chart</h3>
+          <p>Floating bars show how a starting value is pushed up or down by a sequence of gains and losses to reach a final total.</p>
+          <div class="use-for"><b>Use for</b>Revenue bridge: last year's total, plus new enrollments, minus dropouts, minus refunds, equals this year's total.</div>
+        </div>
+        <div class="chart-box" style="padding:20px 14px;">
+          <svg viewBox="0 0 260 150" width="100%" height="100%">
+            <g font-family="JetBrains Mono" font-size="8" fill="#A9BDB8">
+              <text x="20" y="145">Start</text><text x="70" y="145">+New</text><text x="120" y="145">-Drop</text><text x="175" y="145">-Ref.</text><text x="225" y="145">End</text>
+            </g>
+            <rect x="10" y="50" width="28" height="80" fill="#4FB6A6"/>
+            <rect x="60" y="20" width="28" height="30" fill="#4FB6A6"/>
+            <rect x="110" y="20" width="28" height="18" fill="#D9694F"/>
+            <rect x="163" y="38" width="28" height="14" fill="#D9694F"/>
+            <rect x="215" y="35" width="28" height="95" fill="#E8A33D"/>
+            <line x1="38" y1="50" x2="60" y2="50" stroke="#5B6F6A" stroke-dasharray="2,2"/>
+            <line x1="88" y1="20" x2="110" y2="20" stroke="#5B6F6A" stroke-dasharray="2,2"/>
+            <line x1="138" y1="38" x2="163" y2="38" stroke="#5B6F6A" stroke-dasharray="2,2"/>
+            <line x1="191" y1="52" x2="215" y2="52" stroke="#5B6F6A" stroke-dasharray="2,2"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--coral)"></span>Funnel Chart</h3>
+          <p>Bars shrink from top to bottom, showing how a group narrows through sequential stages.</p>
+          <div class="use-for"><b>Use for</b>Inquiries → Demo attended → Enrolled → Completed course, to spot the biggest drop-off stage.</div>
+        </div>
+        <div class="chart-box" style="padding:16px 30px;">
+          <svg viewBox="0 0 200 150" width="100%" height="100%">
+            <polygon points="0,0 200,0 165,35 35,35" fill="#D9694F"/>
+            <polygon points="35,37 165,37 135,72 65,72" fill="#E8A33D"/>
+            <polygon points="65,74 135,74 112,109 88,109" fill="#4FB6A6"/>
+            <polygon points="88,111 112,111 103,146 97,146" fill="#5B8FD9"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--coral)"></span>Gauge Chart</h3>
+          <p>A speedometer-style arc showing one value against a target or range — instantly readable as "on track" or not.</p>
+          <div class="use-for"><b>Use for</b>Enrollment target progress: 78 of 100 seats filled this batch.</div>
+          <div class="avoid"><b>Avoid when</b>You need to show trend or comparison — a gauge only ever shows one moment, one number.</div>
+        </div>
+        <div class="chart-box" style="padding:10px;">
+          <svg viewBox="0 0 200 120" width="100%" height="100%">
+            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#2C4E48" stroke-width="16"/>
+            <path d="M 20 100 A 80 80 0 0 1 150 30" fill="none" stroke="#4FB6A6" stroke-width="16"/>
+            <line x1="100" y1="100" x2="145" y2="42" stroke="#E8A33D" stroke-width="3"/>
+            <circle cx="100" cy="100" r="6" fill="#E8A33D"/>
+            <text x="100" y="90" text-anchor="middle" font-family="Space Grotesk" font-size="16" fill="#EFEAE0" font-weight="700">78%</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--coral)"></span>Card / KPI Visual</h3>
+          <p>One number, as large as possible. No axes, no categories — just the headline figure, sometimes with a trend arrow.</p>
+          <div class="use-for"><b>Use for</b>"Total students enrolled this month" pinned at the top of a dashboard.</div>
+        </div>
+        <div class="chart-box kpi-card">
+          <div>
+            <div class="kpi-num">312</div>
+            <div class="kpi-label">Students Enrolled</div>
+            <div class="kpi-trend">▲ 12% vs last month</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-text">
+          <h3><span class="swatch" style="background:var(--ink-dim)"></span>Table / Matrix</h3>
+          <p>Rows and columns of exact figures. Not a "chart" in the visual sense — but often the right answer when precision beats pattern.</p>
+          <div class="use-for"><b>Use for</b>A fee-collection register a trainer needs to audit line by line, where exact rupee values matter more than shape.</div>
+          <div class="avoid"><b>Avoid when</b>The goal is to spot a trend or outlier fast — tables are read, not scanned.</div>
+        </div>
+        <div class="chart-box" style="padding:16px;">
+          <table class="mini">
+            <tr><th>Course</th><th>Seats</th><th>Fee ₹</th></tr>
+            <tr><td>Python + DA</td><td>48</td><td>18,000</td></tr>
+            <tr><td>Web Dev</td><td>36</td><td>15,000</td></tr>
+            <tr><td>MS Office</td><td>28</td><td>6,000</td></tr>
+            <tr><td>Total</td><td>112</td><td>39,000</td></tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div id="emptyState" class="empty">No visuals match your search. Try another keyword or choose “All categories”.</div>
+
+  <footer>
+    <span>Power BI Chart Reference · built for teaching use</span>
+    <span>Illustrative data · Choose the visual by the question</span>
+  </footer>
+
+</div>
+
+<script>
+Chart.defaults.color = '#A9BDB8';
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.font.size = 10;
+
+const teal='#4FB6A6', amber='#E8A33D', coral='#D9694F', blue='#5B8FD9', violet='#9C7FD1';
+const grid = {color:'rgba(44,78,72,0.5)'};
+const noGridX = {display:false};
+
+const courses = ['Python DA','Web Dev','MS Office','Tally','Java'];
+const scatterData = [
+  {x:2.5,y:53},{x:4,y:57},{x:5.2,y:61},{x:6.1,y:64},{x:7,y:66},
+  {x:8.3,y:70},{x:9.1,y:71},{x:10.2,y:74},{x:11,y:76},{x:12.5,y:78},
+  {x:13.1,y:81},{x:14,y:82},{x:15.2,y:85},{x:16,y:87},{x:17.5,y:88},
+  {x:18.2,y:91},{x:19.1,y:92},{x:20.3,y:95}
+];
+const seats = [48,36,28,22,18];
+const months = ['Jan','Feb','Mar','Apr','May','Jun'];
+
+new Chart(document.getElementById('c1'), {
+  type:'bar',
+  data:{labels:courses, datasets:[{data:seats, backgroundColor:teal, borderRadius:4}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}, scales:{x:{grid:noGridX},y:{grid:grid}}}
+});
+
+new Chart(document.getElementById('c2'), {
+  type:'bar',
+  data:{labels:courses, datasets:[{data:seats, backgroundColor:teal, borderRadius:4}]},
+  options:{indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{grid:grid},y:{grid:noGridX}}}
+});
+
+new Chart(document.getElementById('c3'), {
+  type:'bar',
+  data:{labels:months, datasets:[
+    {label:'Data Analytics', data:[10,12,14,15,17,19], backgroundColor:teal},
+    {label:'Web Dev', data:[8,9,7,10,11,12], backgroundColor:amber},
+    {label:'Office Tools', data:[5,6,5,7,6,8], backgroundColor:coral}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:8,font:{size:9}}}}, scales:{x:{stacked:true,grid:noGridX},y:{stacked:true,grid:grid}}}
+});
+
+new Chart(document.getElementById('c4'), {
+  type:'line',
+  data:{labels:months, datasets:[{data:[20,28,24,35,40,52], borderColor:blue, backgroundColor:blue, tension:0.35, pointRadius:3}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}, scales:{x:{grid:noGridX},y:{grid:grid}}}
+});
+
+new Chart(document.getElementById('c5'), {
+  type:'line',
+  data:{labels:months, datasets:[{data:[15000,32000,51000,78000,110000,150000], borderColor:blue, backgroundColor:'rgba(91,143,217,0.25)', fill:true, tension:0.3, pointRadius:2}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}, scales:{x:{grid:noGridX},y:{grid:grid,ticks:{callback:v=>v/1000+'k'}}}}
+});
+
+new Chart(document.getElementById('c6'), {
+  data:{labels:months, datasets:[
+    {type:'bar', label:'Enrollments', data:[20,28,24,35,40,52], backgroundColor:teal, yAxisID:'y'},
+    {type:'line', label:'Revenue', data:[40,55,50,68,80,95], borderColor:amber, backgroundColor:amber, yAxisID:'y1', tension:0.3, pointRadius:2}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:8,font:{size:9}}}}, scales:{
+    x:{grid:noGridX},
+    y:{position:'left', grid:grid},
+    y1:{position:'right', grid:{display:false}}
+  }}
+});
+
+new Chart(document.getElementById('c7'), {
+  type:'pie',
+  data:{labels:['Data Analytics','Web Dev','Office Tools'], datasets:[{data:[42,34,24], backgroundColor:[teal,amber,violet]}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:8,font:{size:9}}}}}
+});
+
+new Chart(document.getElementById('c8'), {
+  type:'doughnut',
+  data:{labels:['Data Analytics','Web Dev','Office Tools'], datasets:[{data:[42,34,24], backgroundColor:[teal,amber,violet]}]},
+  options:{cutout:'65%', plugins:{legend:{position:'right',labels:{boxWidth:8,font:{size:9}}}}}
+});
+
+new Chart(document.getElementById('c9'), {
+  type:'scatter',
+  data:{datasets:[{data:scatterData, backgroundColor:violet}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}, scales:{x:{grid:grid,title:{display:true,text:'Study hrs/wk',font:{size:9}}},y:{grid:grid,title:{display:true,text:'Score %',font:{size:9}}}}}
+});
+
+new Chart(document.getElementById('c10'), {
+  type:'bubble',
+  data:{datasets:[{data:[
+    {x:6000,y:4.2,r:14},{x:15000,y:4.6,r:20},{x:18000,y:4.8,r:22},
+    {x:9000,y:4.0,r:10},{x:20000,y:4.3,r:16},{x:12000,y:4.5,r:12}
+  ], backgroundColor:'rgba(156,127,209,0.55)'}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}, scales:{x:{grid:grid,title:{display:true,text:'Fee ₹',font:{size:9}}},y:{grid:grid,title:{display:true,text:'Rating',font:{size:9}}}}}
+});
+</script>
+
+<script>
+/* ===== Chart fallback: keeps the guide useful if a CDN is blocked ===== */
+window.addEventListener('load', () => {
+  if (window.Chart) return;
+
+  document.querySelectorAll('.chart-box canvas').forEach((canvas) => {
+    const box = canvas.closest('.chart-box');
+    if (!box) return;
+    canvas.style.display = 'none';
+    const note = document.createElement('div');
+    note.className = 'empty-visual';
+    note.innerHTML = '<div><strong style="display:block;color:var(--amber);font-size:13px;margin-bottom:6px">Visual preview</strong><span>Chart.js could not load. Refresh with internet access to render the interactive chart.</span></div>';
+    box.appendChild(note);
+  });
+});
+</script>
+
+</body>
+</html>
