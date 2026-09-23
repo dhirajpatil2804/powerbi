@@ -1848,10 +1848,12 @@ document.addEventListener('DOMContentLoaded', () => {
       <a href="#part-to-whole">PART</a>
       <a href="#relationship">RELATIONSHIP</a>
       <a href="#flow">FLOW</a>
+      <a href="#dax">DAX</a>
     </div>
     <div class="top-actions">
       <button class="icon-btn" onclick="window.print()">PRINT</button>
       <button class="icon-btn" id="densityBtn" title="Toggle compact view">DENSITY</button>
+      <a class="icon-btn" href="PowerBI_DAX_Practice_Dataset.xlsx" download="PowerBI_DAX_Practice_Dataset.xlsx" style="text-decoration:none;display:inline-flex;align-items:center;">DAX XLSX</a>
     </div>
   </nav>
 
@@ -1875,7 +1877,7 @@ document.addEventListener('DOMContentLoaded', () => {
   </header>
 
   <div class="search-row">
-    <input class="search" id="chartSearch" type="search" placeholder="Search a visual: e.g. line, KPI, funnel, scatter...">
+    <input class="search" id="chartSearch" type="search" placeholder="Search a visual or DAX: e.g. line, KPI, CALCULATE, RANKX...">
     <select class="filter" id="categoryFilter">
       <option value="all">All categories</option>
       <option value="comparison">Comparison</option>
@@ -1883,6 +1885,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <option value="part-to-whole">Part-to-whole</option>
       <option value="relationship">Relationship</option>
       <option value="flow">Flow & single value</option>
+      <option value="dax">DAX</option>
     </select>
   </div>
 
@@ -2221,6 +2224,104 @@ document.addEventListener('DOMContentLoaded', () => {
   .responsive-assurance{gap:6px;margin:12px 0 18px;}
   .responsive-assurance span{font-size:10px;padding:6px 9px;}
 }
+
+/* ===== DAX LEARNING HUB ===== */
+.dax-section{scroll-margin-top:90px;margin-top:10px;margin-bottom:72px;}
+.dax-hero{
+  padding:26px;border:1px solid rgba(99,209,191,.22);border-radius:20px;
+  background:linear-gradient(145deg,rgba(27,67,61,.82),rgba(14,33,31,.94));
+  box-shadow:var(--shadow-soft);margin-bottom:18px;
+}
+.dax-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap;}
+.dax-head h2{font-family:var(--display);font-size:28px;margin:0 0 6px;letter-spacing:-.025em;}
+.dax-head p{color:var(--ink-dim);margin:0;max-width:760px;font-size:14px;}
+.dax-download{
+  display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+  color:#102725;background:linear-gradient(135deg,var(--teal-bright),#8be0d1);
+  border-radius:10px;padding:11px 14px;font:600 11px var(--mono);
+  border:1px solid rgba(255,255,255,.15);white-space:nowrap;
+  box-shadow:0 8px 24px rgba(79,182,166,.16);transition:.2s ease;
+}
+.dax-download:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(79,182,166,.22);}
+.dax-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+.dax-card{
+  background:linear-gradient(145deg,rgba(20,46,43,.96),rgba(23,55,51,.72));
+  border:1px solid rgba(151,205,194,.15);border-radius:15px;padding:18px;
+  box-shadow:var(--shadow-soft);transition:.2s ease;
+}
+.dax-card:hover{transform:translateY(-2px);border-color:rgba(99,209,191,.35);}
+.dax-card h3{font-family:var(--display);font-size:17px;margin:0 0 6px;color:var(--text);}
+.dax-tag{display:inline-block;font:600 9px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--amber-bright);margin-bottom:8px;}
+.dax-card p{font-size:13px;color:var(--ink-dim);margin:0 0 10px;}
+.dax-code{
+  display:block;background:#0b1b19;border:1px solid rgba(151,205,194,.12);
+  border-radius:9px;padding:11px 12px;color:#bfe8df;font:11.5px/1.6 var(--mono);
+  overflow:auto;white-space:pre-wrap;
+}
+.dax-mini-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px;}
+.dax-mini{
+  padding:13px;border:1px solid rgba(151,205,194,.12);border-radius:12px;
+  background:rgba(255,255,255,.018);
+}
+.dax-mini b{display:block;color:var(--teal-bright);font:700 12px var(--mono);margin-bottom:4px;}
+.dax-mini span{color:var(--ink-dim);font-size:12px;}
+.dax-rules-wrap{
+  margin-top:22px;
+  padding:18px;
+  border:1px solid rgba(151,205,194,.18);
+  border-radius:18px;
+  background:linear-gradient(145deg,rgba(23,55,51,.88),rgba(14,33,31,.92));
+  box-shadow:0 14px 38px rgba(0,0,0,.14);
+}
+.dax-rules-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:0 0 12px;
+  color:#f7f4ec;
+  font-family:var(--display);
+  font-size:17px;
+}
+.dax-rules-title span{
+  color:var(--amber-bright);
+  font:600 10px var(--mono);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.dax-rules{
+  margin-top:0;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.dax-rule{
+  min-height:54px;
+  display:flex;
+  align-items:center;
+  padding:12px 15px;
+  border:1px solid rgba(151,205,194,.12);
+  border-left:3px solid var(--teal-bright);
+  background:rgba(255,255,255,.035);
+  border-radius:0 10px 10px 0;
+  font-size:13px;
+  line-height:1.5;
+  color:#d8e4e0;
+}
+.dax-rule b{
+  color:#f7f4ec;
+  font-weight:700;
+}
+.dax-rule:hover{
+  background:rgba(79,182,166,.09);
+  border-color:rgba(99,209,191,.30);
+  transform:translateY(-1px);
+}
+@media(max-width:760px){
+  .dax-grid,.dax-rules{grid-template-columns:1fr;}
+  .dax-mini-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:440px){.dax-mini-grid{grid-template-columns:1fr;}.dax-hero{padding:20px;}}
+
 </style>
 
 <section class="visual-dictionary" id="complete-visual-dictionary">
@@ -2689,6 +2790,140 @@ document.addEventListener('DOMContentLoaded', () => {
     <b>“Where is it happening?”</b> → map. 
     <b>“Are we meeting a goal?”</b> → KPI/gauge/card. 
     <b>“Why did it happen?”</b> → Key Influencers/Decomposition Tree/assisted analysis.
+  </div>
+</section>
+
+
+<section class="category dax-section" id="dax" data-category="dax">
+  <div class="dax-hero">
+    <div class="dax-head">
+      <div>
+        <div class="cat-head" style="margin-bottom:7px;"><span class="cat-num">07</span><h2>DAX Learning Hub</h2></div>
+        <p>Use DAX (Data Analysis Expressions) for calculated columns, measures, calculated tables, filtering, aggregation and time intelligence. The examples below follow the beginner → advanced flow in the DAX cheat sheet.</p>
+      </div>
+      <a class="dax-download" href="PowerBI_DAX_Practice_Dataset.xlsx" download="PowerBI_DAX_Practice_Dataset.xlsx">↓ DOWNLOAD PRACTICE DATASET</a>
+    </div>
+    <div class="dax-mini-grid">
+      <div class="dax-mini"><b>CALCULATED COLUMN</b><span>Row-by-row value stored in the model.</span></div>
+      <div class="dax-mini"><b>MEASURE</b><span>Dynamic calculation that responds to filter context.</span></div>
+      <div class="dax-mini"><b>CALCULATED TABLE</b><span>Creates a table from a DAX expression.</span></div>
+    </div>
+  </div>
+
+  <div class="cards dax-grid">
+    <article class="dax-card card">
+      <span class="dax-tag">01 · Aggregation</span><h3>SUM & COUNTROWS</h3>
+      <p>Use <b>SUM()</b> to add a numeric column and <b>COUNTROWS()</b> to count rows.</p>
+      <code class="dax-code">Total Sales = SUM(Sales[Sales Amount])
+Total Orders = COUNTROWS(Sales)</code>
+    </article>
+    <article class="dax-card card">
+      <span class="dax-tag">02 · Unique values</span><h3>DISTINCTCOUNT</h3>
+      <p>Counts unique values, such as unique customers or products.</p>
+      <code class="dax-code">Unique Customers =
+DISTINCTCOUNT(Sales[Customer])</code>
+    </article>
+    <article class="dax-card card">
+      <span class="dax-tag">03 · Iterators</span><h3>SUMX & AVERAGEX</h3>
+      <p>Calculate an expression row by row, then aggregate the results.</p>
+      <code class="dax-code">Calculated Sales =
+SUMX(Sales, Sales[Quantity] * Sales[UnitPrice])</code>
+    </article>
+    <article class="dax-card card">
+      <span class="dax-tag">04 · Logic</span><h3>IF & SWITCH</h3>
+      <p>Use conditional logic for labels, categories and multiple conditions.</p>
+      <code class="dax-code">Sales Category =
+IF(Sales[Sales Amount] &gt;= 50000, "High", "Low")</code>
+    </article>
+    <article class="dax-card card">
+      <span class="dax-tag">05 · Safe calculation</span><h3>DIVIDE</h3>
+      <p>Safely performs division and lets you define an alternate result for zero/blank denominators.</p>
+      <code class="dax-code">Profit Margin =
+DIVIDE([Total Profit], [Total Sales], 0)</code>
+    </article>
+    <article class="dax-card card">
+      <span class="dax-tag">06 · Core concept</span><h3>CALCULATE</h3>
+      <p>Changes filter context before evaluating an expression. It is one of the most important DAX functions.</p>
+      <code class="dax-code">Maharashtra Sales =
+CALCULATE([Total Sales], Sales[State] = "Maharashtra")</code>
+    </article>
+    <article class="dax-card card">
+      <span class="dax-tag">07 · Filtering</span><h3>FILTER</h3>
+      <p>Creates a filtered table based on a condition and is commonly used with CALCULATE.</p>
+      <code class="dax-code">High Value Sales =
+CALCULATE([Total Sales],
+  FILTER(Sales, Sales[Sales Amount] &gt; 50000))</code>
+    </article>
+    <article class="dax-card card">
+      <span class="dax-tag">08 · Filter removal</span><h3>ALL & ALLEXCEPT</h3>
+      <p>Remove filters or preserve selected columns when calculating totals and percentages.</p>
+      <code class="dax-code">Sales % of Total =
+DIVIDE([Total Sales],
+  CALCULATE([Total Sales], ALL(Sales)), 0)</code>
+    </article>
+    <article class="dax-card card">
+      <span class="dax-tag">09 · Ranking</span><h3>RANKX</h3>
+      <p>Ranks values across a table or set of products. DESC puts the highest value at rank 1.</p>
+      <code class="dax-code">Product Rank =
+RANKX(ALL(Sales[Product]), [Total Sales], , DESC)</code>
+    </article>
+    <article class="dax-card card">
+      <span class="dax-tag">10 · Relationships</span><h3>RELATED & LOOKUPVALUE</h3>
+      <p>Use RELATED() for values from a related table and LOOKUPVALUE() for matching search conditions.</p>
+      <code class="dax-code">Product Category =
+RELATED(Products[Category])</code>
+    </article>
+    <article class="dax-card card">
+      <span class="dax-tag">11 · Selection</span><h3>SELECTEDVALUE & HASONEVALUE</h3>
+      <p>Useful for slicer-aware labels and logic when one value is selected.</p>
+      <code class="dax-code">Selected Product =
+SELECTEDVALUE(Sales[Product], "Multiple Products")</code>
+    </article>
+    <article class="dax-card card">
+      <span class="dax-tag">12 · Blank handling</span><h3>ISBLANK & COALESCE</h3>
+      <p>Detect blank results or replace a blank with the first available non-blank value.</p>
+      <code class="dax-code">Sales Value =
+COALESCE([Total Sales], 0)</code>
+    </article>
+    <article class="dax-card card">
+      <span class="dax-tag">13 · Date functions</span><h3>YEAR, MONTH, DAY & FORMAT</h3>
+      <p>Extract date parts or format a date for display.</p>
+      <code class="dax-code">Year = YEAR(Sales[Date])
+Month = FORMAT(Sales[Date], "MMMM")</code>
+    </article>
+    <article class="dax-card card">
+      <span class="dax-tag">14 · Date table</span><h3>CALENDAR</h3>
+      <p>Create a continuous date table for time-intelligence calculations.</p>
+      <code class="dax-code">DateTable =
+CALENDAR(DATE(2025,1,1), DATE(2025,12,31))</code>
+    </article>
+    <article class="dax-card card">
+      <span class="dax-tag">15 · Time intelligence</span><h3>TOTALYTD, TOTALMTD & TOTALQTD</h3>
+      <p>Calculate year-to-date, month-to-date and quarter-to-date results.</p>
+      <code class="dax-code">YTD Sales =
+TOTALYTD([Total Sales], DateTable[Date])</code>
+    </article>
+    <article class="dax-card card">
+      <span class="dax-tag">16 · Period comparison</span><h3>DATEADD & SAMEPERIODLASTYEAR</h3>
+      <p>Shift dates or compare the current period with the equivalent previous-year period.</p>
+      <code class="dax-code">Previous Year Sales =
+CALCULATE([Total Sales],
+  SAMEPERIODLASTYEAR(DateTable[Date]))</code>
+    </article>
+  </div>
+
+  <div class="dax-rules-wrap">
+    <h3 class="dax-rules-title"><span>QUICK REFERENCE</span> Golden Rules for DAX</h3>
+    <div class="dax-rules">
+      <div class="dax-rule"><b>Need a value for every row?</b>&nbsp; Think Calculated Column.</div>
+      <div class="dax-rule"><b>Need a slicer/visual-responsive calculation?</b>&nbsp; Think Measure.</div>
+      <div class="dax-rule"><b>Need row-by-row calculation?</b>&nbsp; Think SUMX / AVERAGEX.</div>
+      <div class="dax-rule"><b>Need to change filter context?</b>&nbsp; Think CALCULATE.</div>
+      <div class="dax-rule"><b>Need to remove filters?</b>&nbsp; Think ALL.</div>
+      <div class="dax-rule"><b>Need percentages?</b>&nbsp; Think DIVIDE.</div>
+      <div class="dax-rule"><b>Need ranking?</b>&nbsp; Think RANKX.</div>
+      <div class="dax-rule"><b>Need previous/next periods?</b>&nbsp; Think DATEADD or SAMEPERIODLASTYEAR.</div>
+    </div>
   </div>
 </section>
 
